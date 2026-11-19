@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#111418">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>販賣機人 Vending Machine Operator</title>
+  <link rel="icon" href="assets/drinks/soda.webp">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 上半部：外部視角 -->
+    <section id="topView">
+      <div id="hud">
+        <div class="hud-left">
+          <span class="hud-tag">剩餘</span>
+          <div id="timer" class="led-timer">3:00</div>
+        </div>
+        <div class="hud-right">
+          <span id="queueCount">排隊 0 人</span>
+          <button id="btnMute" class="mute-btn" aria-label="音效開關">🔊</button>
+        </div>
+      </div>
+      <div id="scene">
+        <div class="bg-street"></div>
+        <div id="crowd"></div>
+        <div id="queueMore" class="hidden"></div>
+        <div class="glass"></div>
+      </div>
+      <div id="infoBar">
+        <div class="panel">
+          <div class="panel-label"><i class="dot red"></i>顧客點選燈號</div>
+          <div id="orderBody" class="panel-body"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-label"><i class="dot green"></i>投幣顯示器</div>
+          <div id="coinBody" class="panel-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 下半部：玩家工作台 -->
+    <section id="workbench">
+      <div id="tabs">
+        <button class="tab-btn active" data-tab="drink"><span class="tab-ico">🥤</span>飲料與加熱區<span id="drinkBadge" class="tab-badge hidden">叮!</span></button>
+        <button class="tab-btn" data-tab="cash"><span class="tab-ico">💰</span>收銀找零區</button>
+      </div>
+
+      <div id="tabDrink" class="tab-page">
+        <div id="shelf"></div>
+        <div id="stations">
+          <div class="station drink-station">
+            <div class="st-label">😋 喝掉</div>
+            <div id="drinkSlot" class="slot"></div>
+          </div>
+          <div class="station heater-station">
+            <div class="st-label">🔥 加熱爐</div>
+            <div id="heater"></div>
+          </div>
+          <div class="station chute-station">
+            <div class="st-label">⬇ 出貨槽</div>
+            <div id="chuteSlot" class="slot chute"></div>
+          </div>
+        </div>
+        <button id="btnShip" class="action-btn ship">確認出貨</button>
+      </div>
+
+      <div id="tabCash" class="tab-page hidden">
+        <div id="tray">
+          <div class="tray-head">
+            <span class="tray-label">退幣槽・準備找給顧客</span>
+            <span class="tray-led">$<span id="trayTotal">0</span></span>
+          </div>
+          <div id="trayCoins"></div>
+        </div>
+        <div id="coinBtns">
+          <button class="coin-btn" data-v="50"><img src="assets/ui/coin50.webp" alt="50元"></button>
+          <button class="coin-btn" data-v="10"><img src="assets/ui/coin10.webp" alt="10元"></button>
+          <button class="coin-btn" data-v="5"><img src="assets/ui/coin5.webp" alt="5元"></button>
+          <button class="coin-btn" data-v="1"><img src="assets/ui/coin1.webp" alt="1元"></button>
+        </div>
+        <div class="cash-actions">
+          <button id="btnReset" class="action-btn reset">清空</button>
+          <button id="btnChange" class="action-btn give">確認找零</button>
+        </div>
+      </div>
+
+      <div id="peeOverlay" class="hidden">
+        <div class="pee-ico">🚽</div>
+        <div class="pee-title">憋不住了！跑去尿尿中…</div>
+        <div class="pee-sub">飲料喝太多，<span id="peeTime">4</span> 秒後回來</div>
+      </div>
+    </section>
+
+    <div id="coach" class="hidden">
+      <div class="coach-card">
+        <div class="coach-head">
+          <span class="coach-badge">新手教學</span>
+          <span id="coachLesson"></span>
+          <button id="coachSkip">跳過教學</button>
+        </div>
+        <div id="coachText"></div>
+        <button id="coachNext" class="hidden">下一步 ▶</button>
+      </div>
+    </div>
+
+    <div id="toast"></div>
+    <div id="timeUp" class="hidden">時間到！</div>
+
+    <!-- 開始畫面 -->
+    <div id="startScreen" class="overlay">
+      <div class="start-card">
+        <div class="keyart">
+          <img src="assets/ui/keyart.webp" alt="">
+          <div class="keyart-title">
+            <h1 class="title">販賣機人</h1>
+            <p class="title-en">VENDING MACHINE OPERATOR</p>
+          </div>
+        </div>
+        <ul class="howto">
+          <li>你是躲在販賣機裡的<b>人工核心</b>，系統<b>不會幫你算錢</b>，也不會阻止你出錯。</li>
+          <li>看上方燈號：顧客點的<b>品項、冷／熱、售價</b>與<b>投入金額</b>。</li>
+          <li>【飲料區】點飲料使其亮起 → 點<b class="hot">加熱爐</b>（熱飲需 2.5 秒）或<b class="cold">出貨槽</b>放入 → 按【確認出貨】。</li>
+          <li>拿錯了？點【喝掉】處理掉，但會算<b>營業損失</b>，喝太多還會<b>跑去尿尿</b>！</li>
+          <li>顧客可能<b>投不夠錢</b>！發現時按投幣顯示器的【金錢不足】叫他補錢，冤枉人會被客訴。</li>
+          <li>【收銀區】心算「投入 − 售價」，點硬幣後按【確認找零】。剛好付清就不用找。</li>
+          <li>顧客耐心 20 秒（<b class="hot">⚡急驚風</b>只有 12 秒），歸零就是「吃錢」！</li>
+        </ul>
+        <button id="btnStart" class="big-btn">開始上班</button>
+        <button id="btnTutorial" class="big-btn sub-btn">📖 新手教學</button>
+        <p class="hint">建議使用直式手機遊玩・開啟音效體驗更佳</p>
+      </div>
+    </div>
+
+    <!-- 結算畫面 -->
+    <div id="resultScreen" class="overlay hidden">
+      <div id="resultBody" class="result-wrap"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
