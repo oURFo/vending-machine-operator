@@ -111,15 +111,26 @@
     <div id="timeUp" class="hidden">時間到！</div>
 
     <!-- 開始畫面 -->
-    <div id="startScreen" class="overlay">
-      <div class="start-card">
-        <div class="keyart">
-          <img src="assets/ui/keyart.webp" alt="">
-          <div class="keyart-title">
-            <h1 class="title">販賣機人</h1>
-            <p class="title-en">VENDING MACHINE OPERATOR</p>
-          </div>
+    <div id="startScreen" class="overlay cover-screen">
+      <img class="cover-bg" src="assets/ui/cover.webp" alt="">
+      <div class="cover-logo">
+        <div class="logo-ribbon">一人撐起整台機器的</div>
+        <h1 class="title">販賣機人</h1>
+        <p class="title-en">VENDING MACHINE OPERATOR</p>
+      </div>
+      <div class="cover-actions">
+        <button id="btnStart" class="big-btn">開始上班</button>
+        <div class="cover-row">
+          <button id="btnTutorial" class="big-btn sub-btn">📖 新手教學</button>
+          <button id="btnHowto" class="big-btn sub-btn alt">📋 玩法說明</button>
         </div>
+        <p class="hint">建議使用直式手機遊玩・開啟音效體驗更佳</p>
+      </div>
+    </div>
+
+    <div id="howtoScreen" class="overlay hidden">
+      <div class="howto-card">
+        <h2 class="howto-title">玩法說明</h2>
         <ul class="howto">
           <li>你是躲在販賣機裡的<b>人工核心</b>，系統<b>不會幫你算錢</b>，也不會阻止你出錯。</li>
           <li>看上方燈號：顧客點的<b>品項、冷／熱、售價</b>與<b>投入金額</b>。</li>
@@ -129,9 +140,7 @@
           <li>【收銀區】心算「投入 − 售價」，點硬幣後按【確認找零】。剛好付清就不用找。</li>
           <li>顧客耐心 20 秒（<b class="hot">⚡急驚風</b>只有 12 秒），歸零就是「吃錢」！</li>
         </ul>
-        <button id="btnStart" class="big-btn">開始上班</button>
-        <button id="btnTutorial" class="big-btn sub-btn">📖 新手教學</button>
-        <p class="hint">建議使用直式手機遊玩・開啟音效體驗更佳</p>
+        <button id="btnHowtoClose" class="big-btn sub-btn">知道了</button>
       </div>
     </div>
 

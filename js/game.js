@@ -1076,6 +1076,8 @@
 
     el.btnStart.addEventListener('click', startGame);
     el.btnTutorial.addEventListener('click', startTutorial);
+    $('#btnHowto').addEventListener('click', () => $('#howtoScreen').classList.remove('hidden'));
+    $('#btnHowtoClose').addEventListener('click', () => $('#howtoScreen').classList.add('hidden'));
     el.btnMute.addEventListener('click', () => {
       Sfx.init();
       el.btnMute.textContent = Sfx.toggleMute() ? '🔇' : '🔊';
